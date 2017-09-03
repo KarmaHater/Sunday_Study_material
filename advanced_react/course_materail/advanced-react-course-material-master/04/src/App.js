@@ -7,8 +7,9 @@ Create a `withStorage` higher order component that manages saving and retrieving
 the `sidebarIsOpen` state to local storage
 */
 
-const withStorage = (storageKey, default_) => (Comp) =>
+const withStorage = (storageKey, default_) => Comp =>
     class extends React.Component {
+
         state = {
             [storageKey]: get(storageKey, default_)
         };
@@ -25,14 +26,21 @@ const withStorage = (storageKey, default_) => (Comp) =>
             this.unsubscribe();
         }
 
+        set = value => {
+            set(storageKey, value);
+        };
+
         render() {
-            return <Comp {...this.state} />;
+            return (
+                // gets the props from the child compoent to the HOC
+                <Comp {...this.props} {...this.state} setStorage={this.set} />
+            );
         }
     };
 
 class App extends React.Component {
     render() {
-        const { sidebarIsOpen } = this.props;
+        const { sidebarIsOpen, setStorage, storageKey } = this.props;
         return (
             <div className="app">
                 <header>
@@ -40,7 +48,7 @@ class App extends React.Component {
                         className="sidebar-toggle"
                         title="Toggle menu"
                         onClick={() => {
-                            set("sidebarIsOpen", !sidebarIsOpen);
+                            setStorage(!sidebarIsOpen);
                         }}
                     >
                         <MenuIcon />
@@ -56,4 +64,7 @@ class App extends React.Component {
     }
 }
 
-export default withStorage('sidebarIsOpen', true)(App);
+// export default withStorage(withStorage("match", true)(App));
+// watch out for naming collitions because match is also included in react router
+
+export default withStorage("sidebarIsOpen", true)(App);

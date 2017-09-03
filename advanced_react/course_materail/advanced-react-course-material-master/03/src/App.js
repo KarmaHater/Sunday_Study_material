@@ -54,23 +54,40 @@ import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 
 class AudioPlayer extends React.Component {
-    state = { activeButtonIndex: "" };
-
-    handleClick = () => {
-        console.log("something has been clicked");
+    static childContextTypes = {
+        handleClick: PropTypes.func.isRequired,
+        disabled: PropTypes.bool.isRequired
     };
 
+    state = { activeButtonIndex: "", disabled: false };
+
+    handleClick = title => {
+        debugger;
+        this.setState({
+            activeButtonIndex: title,
+            disabled: title === this.state.activeButtonIndex
+        });
+    };
+
+    getChildContext() {
+        return {
+            handleClick: this.handleClick,
+            disabled: this.state.disabled
+            // activeButtonIndex: this.state.activeButtonIndex
+        };
+    }
+
     render() {
-        const children = React.Children.map(
-            this.props.children,
-            (child, index) => {
-                return React.cloneElement(child, {
-                    activeButton: this.props.activeButtonIndex === index,
-                    handleClick: () => this.handleClick,
-                    disabled: false
-                });
-            }
-        );
+        // const children = React.Children.map(
+        //     this.props.children,
+        //     (child, index) => {
+        //         return React.cloneElement(child, {
+        //             activeButton: this.props.activeButtonIndex === index,
+        //             handleClick: () => this.handleClick,
+        //             disabled: false
+        //         });
+        //     }
+        // );
 
         return (
             <div className="audio-player">
@@ -94,9 +111,13 @@ class PlayPause extends React.Component {
 }
 
 class Progress extends React.Component {
+    static contextTypes = {
+        handleClick: PropTypes.func.isRequired
+    };
+
     render() {
         return (
-            <div className="progress" onClick={this.props.handleClick}>
+            <div className="progress" onClick={this.context.handleClick}>
                 <div
                     className="progress-bar"
                     style={{
@@ -109,12 +130,18 @@ class Progress extends React.Component {
 }
 
 class RadioGroup extends React.Component {
+    static contextTypes = {
+        handleClick: PropTypes.func.isRequired,
+        disabled: PropTypes.bool.isRequired
+        // title: PropTypes.string.isRequired
+    };
+
     render() {
         return (
             <button
                 className="icon-button"
-                onClick={this.props.handleClick}
-                disabled={this.props.disabled}
+                onClick={() => this.context.handleClick(this.props.title)}
+                disabled={this.context.disabled}
                 title={this.props.title}
             >
                 {this.props.children}

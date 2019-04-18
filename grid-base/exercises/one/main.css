@@ -1,0 +1,21 @@
+.grid {
+  display: grid;
+  grid-template: 70px 200px 100px / 400px auto;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+}
+
+.grid div:nth-child(1) {
+  grid-column-start: 1;
+  grid-column-end: 4;
+}
+
+.grid div:nth-child(3) {
+  grid-column-start: 2;
+  grid-column-end: 4;
+}
+
+.grid div:nth-child(4) {
+  grid-column-start: 1;
+  grid-column-end: 4;
+}

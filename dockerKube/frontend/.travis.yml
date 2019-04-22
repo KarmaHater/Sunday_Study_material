@@ -1,0 +1,9 @@
+sudo: required
+services:
+  - docker
+
+before_insatll:
+  - docker build -t andralalyy/frontend -f Dockerfile.dev .
+
+script:
+  - docker run andralalyy/frontend npm run test -- --coverage
